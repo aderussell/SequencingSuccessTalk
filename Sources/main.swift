@@ -118,3 +118,10 @@ while let count = counter.next() {
 
 let i = stride(from: 0, to: 10, by: 1)
 print(i)
+
+
+
+
+for i in Fibonacci().prefix(20) {
+    print(i)
+}
