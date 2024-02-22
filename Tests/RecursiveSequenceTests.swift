@@ -10,6 +10,11 @@ import XCTest
 
 final class RecursiveSequenceTests: XCTestCase {
 
+    struct RecursiveType {
+        var name: String
+        var children: [RecursiveType]
+    }
+    
     let r = RecursiveType(name: "0", children: [
         RecursiveType(name: "0.0", children: [
             RecursiveType(name: "0.0.0", children: []),
@@ -48,7 +53,19 @@ final class RecursiveSequenceTests: XCTestCase {
     ])
     
     func testWithInputSequence() throws {
-        
+        let s1 = RecursiveSequence(element: r, keyPath: \.children)
+        for thing in s1 {
+            print(thing.name)
+        }
+        print("----------")
+        let s2 = RecursiveSequence([r, r1], keyPath: \.children)
+        for thing in s2 {
+            print(thing.name)
+        }
+        print("----------")
+        for thing in [r, r1].recursive(keyPath: \.children) {
+            print(thing.name)
+        }
     }
 
 }
