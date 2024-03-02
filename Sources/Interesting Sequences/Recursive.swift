@@ -37,10 +37,52 @@ struct RecursiveSequence<Base: Sequence, S1: Sequence>: Sequence where S1.Elemen
             return last
         }
     }
+    
+    
+}
+
+struct BreadthFirstRecursiveSequence<Base: Sequence, S1: Sequence>: Sequence where S1.Element == Base.Element {
+    let base: Base
+    let keyPath: KeyPath<Base.Element, S1>
+    
+    init(_ sequence: Base, keyPath: KeyPath<Base.Element, S1>) {
+        self.base = sequence
+        self.keyPath = keyPath
+    }
+    
+    init<E>(element: E, keyPath: KeyPath<E, S1>) where Base == CollectionOfOne<E> {
+        self.init(CollectionOfOne(element), keyPath: keyPath)
+    }
+    
+    func makeIterator() -> BreadthFirstRecursiveIterator {
+        BreadthFirstRecursiveIterator(base: base, keyPath: keyPath)
+    }
+    
+    struct BreadthFirstRecursiveIterator: IteratorProtocol {
+        var queue: [Base.Element]
+        var keyPath: KeyPath<Element, S1>
+        
+        init(base: Base, keyPath: KeyPath<Base.Element, S1>) {
+            self.queue = Array(base)
+            self.keyPath = keyPath
+        }
+        
+        mutating func next() -> Base.Element? {
+            guard !queue.isEmpty else { return nil }
+            let next = queue.removeFirst()
+            let children = next[keyPath: keyPath]
+            queue.append(contentsOf: children)
+            return next
+        }
+    }
 }
 
 extension Sequence {
     func recursive<S1: Sequence>(keyPath: KeyPath<Element, S1>) -> RecursiveSequence<Self, S1> {
         RecursiveSequence(self, keyPath: keyPath)
+    }
+    
+    func recursive_bfs<S1: Sequence>(keyPath: KeyPath<Element, S1>) -> BreadthFirstRecursiveSequence<Self, S1> {
+        BreadthFirstRecursiveSequence(self, keyPath: keyPath)
     }
 }

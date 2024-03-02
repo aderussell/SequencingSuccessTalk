@@ -68,4 +68,20 @@ final class RecursiveSequenceTests: XCTestCase {
         }
     }
 
+    
+    func testWithInputSequence_bfs() throws {
+        let s1 = BreadthFirstRecursiveSequence(element: r, keyPath: \.children)
+        for thing in s1 {
+            print(thing.name)
+        }
+        print("----------")
+        let s2 = BreadthFirstRecursiveSequence([r, r1], keyPath: \.children)
+        for thing in s2 {
+            print(thing.name)
+        }
+        print("----------")
+        for thing in [r, r1].recursive_bfs(keyPath: \.children) {
+            print(thing.name)
+        }
+    }
 }
