@@ -4,20 +4,29 @@
 
 import Foundation
 
-struct Fibonacci: Sequence {
-    typealias Element = Int
+public struct Fibonacci: Sequence {
+    public typealias Element = Int
     
-    struct Iterator: IteratorProtocol {
+    public init() {}
+    
+    public struct Iterator: IteratorProtocol {
         private var elements = (0,1)
-        mutating func next() -> Element? {
-            let result = elements.0
-            let next = elements.0 + elements.1
-            elements = (elements.1, next)
-            return result
+        public mutating func next() -> Element? {
+            defer { elements = (elements.1, elements.0 + elements.1) }
+            return elements.0
         }
     }
     
-    func makeIterator() -> Iterator {
+    public func makeIterator() -> Iterator {
         Iterator()
+    }
+}
+
+
+
+func fibonacci() -> some Sequence<Int> {
+    sequence(state: (0, 1)) { (state) -> Int? in
+        defer { state = (state.1, state.0 + state.1) }
+        return state.0
     }
 }
