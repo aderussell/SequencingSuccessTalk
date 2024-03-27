@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import SequencingSuccessTalk
+import SequencingSuccessTalk
 
 final class FibonacciTests: XCTestCase {
 
