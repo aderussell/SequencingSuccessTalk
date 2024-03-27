@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import SequencingSuccessTalk
+import SequencingSuccessTalk
 
 final class RecursiveSequenceTests: XCTestCase {
 
@@ -83,5 +83,15 @@ final class RecursiveSequenceTests: XCTestCase {
         for thing in [r, r1].recursive_bfs(keyPath: \.children) {
             print(thing.name)
         }
+    }
+    
+    func gatherValues_dfs(node: RecursiveType) -> [String] {
+        var results = [node.name]
+        node.children.forEach { results.append(contentsOf: gatherValues_dfs(node: $0)) }
+        return results
+    }
+    
+    func testRecursive() {
+        print(gatherValues_dfs(node: r))
     }
 }
