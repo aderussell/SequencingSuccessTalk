@@ -5,13 +5,20 @@
 import Foundation
 
 extension Sequence {
-    func toArray() -> Array<Element> {
+    public func toArray() -> Array<Element> {
         Array(self)
     }
 }
 
 extension Sequence where Element: Hashable {
-    func toSet() -> Set<Element> {
+    public func toSet() -> Set<Element> {
         Set(self)
+    }
+}
+
+
+extension Collection where Index == Int {
+    func adjustedOffset(_ offset: Int) -> Element {
+        self[startIndex + offset]
     }
 }

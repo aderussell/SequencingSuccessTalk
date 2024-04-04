@@ -33,12 +33,12 @@ public struct Grid<T> {
     }
     
     @inlinable
-    func linearIndex(for index: Index) -> Int {
+    internal func linearIndex(for index: Index) -> Int {
         index.x + index.y * width
     }
     
     @inlinable
-    func index(from linearIndex: Int) -> Index {
+    internal func index(from linearIndex: Int) -> Index {
         let y = linearIndex / width
         let x = linearIndex % width
         return .init(x: x, y: y)
@@ -87,22 +87,3 @@ extension Grid: BidirectionalCollection {
 }
 
 extension Grid: RandomAccessCollection { }
-
-
-//
-
-//
-//
-    
-//
-
-//}
-//
-extension Grid {
-    func transposed() -> Self {
-        let columns = (0..<width).map { Array(content(column: $0)) }
-        return .init(elements: columns)
-    }
-}
-//
-//
