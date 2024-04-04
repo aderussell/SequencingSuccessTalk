@@ -41,7 +41,6 @@ extension Grid: Equatable where T: Equatable {}
 extension Grid: Hashable where T: Hashable {}
 
 
-
 extension Grid: Collection {
     public typealias Element = T
     public typealias Iterator = IndexingIterator<Self>
@@ -140,11 +139,11 @@ extension Grid {
 
 
 extension Grid {
-    func content(column: Int) -> GridSubSequence<Element> {
+    public func content(column: Int) -> GridSubSequence<Element> {
         subgrid(origin: .init(x: column, y: 0), width: 1, height: height)
     }
     
-    func content(row: Int) -> GridSubSequence<Element> {
+    public func content(row: Int) -> GridSubSequence<Element> {
         subgrid(origin: .init(x: 0, y: row), width: width, height: 1)
     }
 //    
@@ -170,10 +169,11 @@ extension Grid {
 
 //}
 //
-//extension Grid {
-//    func transposed() -> Self {
-//        return .init(elements: columns)
-//    }
-//}
+extension Grid {
+    func transposed() -> Self {
+        let columns = (0..<width).map { Array(content(column: $0)) }
+        return .init(elements: columns)
+    }
+}
 //
 //

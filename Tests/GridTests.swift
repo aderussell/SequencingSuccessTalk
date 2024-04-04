@@ -10,22 +10,6 @@ import SequencingSuccessTalk
 
 final class GridTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
     func test_count() {
         let grid = Grid(elements: [[1,2,3,4],[5,6,7,8],[9,8,7,6],[0,2,3,4]])
         XCTAssertEqual(grid.count, 16)
@@ -51,9 +35,27 @@ final class GridTests: XCTestCase {
         XCTAssertEqual(Array(subgrid), [6,7,8,7,2,3])
     }
     
+    func test_column() {
+        let grid = Grid(elements: [[1,2,3,4],[5,6,7,8],[9,8,7,6],[0,2,3,4]])
+        let subgrid = grid.content(column: 1)
+        XCTAssertEqual(Array(subgrid), [2,6,8,2])
+    }
+    
+    func test_row() {
+        let grid = Grid(elements: [[1,2,3,4],[5,6,7,8],[9,8,7,6],[0,2,3,4]])
+        let subgrid = grid.content(row: 1)
+        XCTAssertEqual(Array(subgrid), [5,6,7,8])
+    }
+    
     func test_windows() {
         let grid = Grid(elements: [[1,2,3,4],[5,6,7,8],[9,8,7,6],[0,2,3,4]])
         let windows = grid.windows(width: 2, height: 2)
-        windows.forEach { print(Array($0)) }
+        var iterator = windows.makeIterator()
+        XCTAssertEqual(Array(iterator.next()!), [1, 2, 5, 6])
+        XCTAssertEqual(Array(iterator.next()!), [2, 3, 6, 7])
+        XCTAssertEqual(Array(iterator.next()!), [5, 6, 9, 8])
+        XCTAssertEqual(Array(iterator.next()!), [6, 7, 8, 7])
+        XCTAssertEqual(Array(iterator.next()!), [9, 8, 0, 2])
+        XCTAssertNil(iterator.next())
     }
 }
