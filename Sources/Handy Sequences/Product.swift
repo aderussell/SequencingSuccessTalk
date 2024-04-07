@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct CombinationsSequence<Base: RandomAccessCollection>: Sequence where Base.Index == Int {
+struct ARCombinationsSequence<Base: RandomAccessCollection>: Sequence where Base.Index == Int {
     internal let _base: Base
     
     struct Iterator: IteratorProtocol {
@@ -37,7 +37,7 @@ struct CombinationsSequence<Base: RandomAccessCollection>: Sequence where Base.I
 }
 
 extension Array {
-    func combinations() -> CombinationsSequence<Self> {
-        CombinationsSequence(_base: self)
+    func combinations() -> ARCombinationsSequence<Self> {
+        ARCombinationsSequence(_base: self)
     }
 }

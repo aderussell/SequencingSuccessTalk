@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct WindowedSequence<Base: Sequence>: Sequence {
+public struct ARWindowedSequence<Base: Sequence>: Sequence {
     internal let _base: Base
     internal let _count: Int
     
@@ -13,12 +13,12 @@ struct WindowedSequence<Base: Sequence>: Sequence {
         _count = count
     }
     
-    struct Iterator: IteratorProtocol {
-        typealias Element = [Base.Element]
+    public struct Iterator: IteratorProtocol {
+        public typealias Element = [Base.Element]
         internal var base: Base.Iterator
         internal var buffer: Element
         
-        mutating func next() -> Element? {
+        public mutating func next() -> Element? {
             guard let nextItem = base.next() else { return nil }
             var buffer = self.buffer
             buffer.append(nextItem)
@@ -28,7 +28,7 @@ struct WindowedSequence<Base: Sequence>: Sequence {
         }
     }
     
-    func makeIterator() -> Iterator {
+    public func makeIterator() -> Iterator {
         var iterator = _base.makeIterator()
         var buffer: [Base.Element] = []
         for _ in 0..<_count-1 {
@@ -41,7 +41,7 @@ struct WindowedSequence<Base: Sequence>: Sequence {
 }
 
 extension Sequence {
-    func windows(ofCount count: Int) -> WindowedSequence<Self> {
-        WindowedSequence(self, count: count)
+    public func windows(ofCount count: Int) -> ARWindowedSequence<Self> {
+        ARWindowedSequence(self, count: count)
     }
 }

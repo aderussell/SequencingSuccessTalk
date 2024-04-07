@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct AdjacentPairsSequence<Base: Sequence>: Sequence {
+struct ARAdjacentPairsSequence<Base: Sequence>: Sequence {
     internal let base: Base
     
     struct Iterator: IteratorProtocol {
@@ -28,7 +28,7 @@ struct AdjacentPairsSequence<Base: Sequence>: Sequence {
 }
 
 extension Sequence {
-    func adjacentPairs() -> AdjacentPairsSequence<Self> {
-        AdjacentPairsSequence(base: self)
+    func adjacentPairs() -> ARAdjacentPairsSequence<Self> {
+        ARAdjacentPairsSequence(base: self)
     }
 }

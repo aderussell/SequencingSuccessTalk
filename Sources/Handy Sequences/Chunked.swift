@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct ChunkedSequence<Base: Sequence>: Sequence {
+struct ARChunkedSequence<Base: Sequence>: Sequence {
     internal let base: Base
     internal let count: Int
     
@@ -32,7 +32,7 @@ struct ChunkedSequence<Base: Sequence>: Sequence {
 }
 
 extension Sequence {
-    func chunked(ofCount count: Int) -> ChunkedSequence<Self> {
-        ChunkedSequence(base: self, count: count)
+    func chunked(ofCount count: Int) -> ARChunkedSequence<Self> {
+        ARChunkedSequence(base: self, count: count)
     }
 }

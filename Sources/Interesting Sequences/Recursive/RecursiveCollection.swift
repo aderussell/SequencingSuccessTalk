@@ -5,12 +5,10 @@
 import Foundation
 
 extension RecursiveSequence: Collection where Base: BidirectionalCollection, S1: BidirectionalCollection, S1.Index == Int, Base.Index == Int {
-    public typealias Element = Base.Element
     public typealias Index = IndexPath
     
     public var startIndex: IndexPath { IndexPath(index: 0) }
     public var endIndex: IndexPath { IndexPath(index: base.count) }
-
     
     public subscript(position: IndexPath) -> Element {
         assert(!position.isEmpty, "Position indexPath cannot be empty")
@@ -27,20 +25,15 @@ extension RecursiveSequence: Collection where Base: BidirectionalCollection, S1:
     public func index(after i: IndexPath) -> IndexPath {
         assert(!i.isEmpty, "Position indexPath cannot be empty")
         let children = self[i][keyPath: keyPath]
-        if !children.isEmpty {
-            return i.appending(0)
-        } else {
-            // get parent and move through
-            var currentPath = i
-            while let currentIndex = currentPath.popLast(), !currentPath.isEmpty {
-                let parent = self[currentPath]
-                let children = parent[keyPath: keyPath]
-                if currentIndex < (children.count - 1) {
-                    return currentPath.appending(currentIndex + 1)
-                }
+        guard children.isEmpty else { return i.appending(0) }
+        var currentPath = i
+        while let currentIndex = currentPath.popLast(), !currentPath.isEmpty {
+            let children = self[currentPath][keyPath: keyPath]
+            if currentIndex < (children.count - 1) {
+                return currentPath.appending(currentIndex + 1)
             }
-            return IndexPath(index: i[0]+1)
         }
+        return IndexPath(index: i[0] + 1)
     }
 }
 

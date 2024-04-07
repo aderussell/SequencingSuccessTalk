@@ -5,8 +5,9 @@
 import Foundation
 
 public struct RecursiveSequence<Base: Sequence, S1: Sequence>: Sequence where S1.Element == Base.Element {
-    let base: Base
-    let keyPath: KeyPath<Base.Element, S1>
+    public typealias Element = Base.Element
+    internal let base: Base
+    internal let keyPath: KeyPath<Base.Element, S1>
     
     public init(_ sequence: Base, keyPath: KeyPath<Base.Element, S1>) {
         self.base = sequence
