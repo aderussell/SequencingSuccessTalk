@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import Algorithms
 
 indirect enum FileSystemItem {
     case file(name: String)
