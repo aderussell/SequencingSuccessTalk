@@ -35,7 +35,7 @@ public struct GridWindowedSequence<T>: Sequence {
 }
 
 extension Grid {
-    public func windows(width: Int, height: Int) -> GridWindowedSequence<T> {
+    public func windows(width: Int, height: Int) -> GridWindowedSequence<Element> {
         GridWindowedSequence(base: self, width: width, height: height)
     }
 }

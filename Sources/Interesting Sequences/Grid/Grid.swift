@@ -4,21 +4,21 @@
 
 import Foundation
 
-public struct Grid<T> {
+public struct Grid<Element> {
     @usableFromInline
-    var elements: [T]
+    var elements: [Element]
     @usableFromInline
     var width: Int
     @usableFromInline
     var height: Int
     
-    public init(elements: [[T]]) {
+    public init(elements: [[Element]]) {
         self.elements = elements.flatMap { $0 }
         self.width = elements.first!.count
         self.height = elements.count
     }
     
-    public init<S: Sequence<T>>(_ elements: S, width: Int, height: Int) {
+    public init<S: Sequence<Element>>(_ elements: S, width: Int, height: Int) {
         let allElements = Array(elements)
         assert(allElements.count == width * height, "Invalid element count for width/height")
         self.elements = allElements
@@ -26,7 +26,7 @@ public struct Grid<T> {
         self.height = height
     }
     
-    public init(width: Int, height: Int, initial: T) {
+    public init(width: Int, height: Int, initial: Element) {
         self.elements = Array(repeating: initial, count: width * height)
         self.width = width
         self.height = height
@@ -45,12 +45,11 @@ public struct Grid<T> {
     }
 }
 
-extension Grid: Equatable where T: Equatable {}
-extension Grid: Hashable where T: Hashable {}
+extension Grid: Equatable where Element: Equatable {}
+extension Grid: Hashable where Element: Hashable {}
 
 
 extension Grid: Collection {
-    public typealias Element = T
     public typealias Iterator = IndexingIterator<Self>
     public typealias Index = Point<Int>
     public typealias Indices = DefaultIndices<Self>
@@ -65,7 +64,7 @@ extension Grid: Collection {
     public var endIndex: Index { index(from: count) }
     
     @inlinable
-    public subscript(point: Point<Int>) -> T {
+    public subscript(point: Point<Int>) -> Element {
         get { elements[linearIndex(for: point)] }
         set { elements[linearIndex(for: point)] = newValue }
     }

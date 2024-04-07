@@ -98,7 +98,7 @@ public struct GridAdjacentBorderIterator<Element>: Collection {
 }
 
 extension Grid {
-    func border(from origin: Point<Int>, width: Int, height: Int, includeDiagonals: Bool = true) -> GridAdjacentBorderIterator<T> {
+    func border(from origin: Point<Int>, width: Int, height: Int, includeDiagonals: Bool = true) -> GridAdjacentBorderIterator<Element> {
         GridAdjacentBorderIterator(grid: self, origin: origin, width: width, height: height, includeDiagonals: includeDiagonals)
     }
 }

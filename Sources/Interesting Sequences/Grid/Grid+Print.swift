@@ -4,7 +4,7 @@
 
 import Foundation
 
-extension Grid where T == String {
+extension Grid where Element == String {
     func print() {
         for y in 0..<height {
             var line = ""
@@ -28,7 +28,7 @@ extension Grid {
     }
 }
 
-extension Grid where T == Character {
+extension Grid where Element == Character {
     func print() {
         for y in 0..<height {
             let line = String(elements[y])

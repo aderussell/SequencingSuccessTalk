@@ -59,7 +59,7 @@ extension Grid {
     }
     
     
-    func walk(from point: Point<Int>, direction: Direction, allowWrapping: Bool, while closure: (T) -> Bool) -> Point<Int>? {
+    func walk(from point: Point<Int>, direction: Direction, allowWrapping: Bool, while closure: (Element) -> Bool) -> Point<Int>? {
         var next = nextPoint(from: point, direction: direction, wrapping: allowWrapping)
         while (next != nil) && closure(self[next!]) {
             next = nextPoint(from: next!, direction: direction, wrapping: allowWrapping)
@@ -67,7 +67,7 @@ extension Grid {
         return next
     }
     
-    func travel(from point: Point<Int>, direction: Direction) -> [T] {
+    func travel(from point: Point<Int>, direction: Direction) -> [Element] {
         switch direction {
         case .right:
             guard point.x < width - 1 else { return [] }
