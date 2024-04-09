@@ -22,3 +22,15 @@ extension Collection where Index == Int {
         self[startIndex + offset]
     }
 }
+
+extension Collection {
+    func indices(where predicate: @escaping (Self.Element) throws -> Bool) rethrows -> [Self.Index] {
+        try indices.filter { try predicate(self[$0]) }
+    }
+}
+
+extension LazyCollection {
+    func indices(where predicate: @escaping (Self.Element) -> Bool) -> LazyFilterCollection<Self.Indices> {
+        indices.lazy.filter { predicate(self[$0]) }
+    }
+}
