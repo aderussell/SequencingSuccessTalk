@@ -58,4 +58,15 @@ final class GridTests: XCTestCase {
         XCTAssertEqual(Array(iterator.next()!), [9, 8, 0, 2])
         XCTAssertNil(iterator.next())
     }
+    
+    func test_rotations() {
+        let grid = Grid(elements: [[1,2],[3,4]])
+        let rotations = grid.rotations(includeFlipped: false)
+        var iterator = rotations.makeIterator()
+        XCTAssertEqual(Array(iterator.next()!), [1, 2, 3, 4])
+        XCTAssertEqual(Array(iterator.next()!), [3, 1, 4, 2])
+        XCTAssertEqual(Array(iterator.next()!), [4, 3, 2, 1])
+        XCTAssertEqual(Array(iterator.next()!), [2, 4, 1, 3])
+        XCTAssertNil(iterator.next())
+    }
 }

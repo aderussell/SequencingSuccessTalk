@@ -18,6 +18,12 @@ public struct Grid<Element> {
         self.height = elements.count
     }
     
+    public init<S: Collection<T>, T: Collection<Element>>(elements: S) {
+        self.elements = elements.flatMap { $0 }
+        self.width = elements.first!.count
+        self.height = elements.count
+    }
+    
     public init<S: Sequence<Element>>(_ elements: S, width: Int, height: Int) {
         let allElements = Array(elements)
         assert(allElements.count == width * height, "Invalid element count for width/height")
