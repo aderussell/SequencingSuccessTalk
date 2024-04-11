@@ -1,6 +1,8 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
+import Foundation
+
 print("Hello, world!")
 
 struct ExampleSequence: Sequence {
@@ -126,3 +128,6 @@ for i in Fibonacci().prefix(20) {
     print(i)
 }
 
+runThemeParkExample()
+runFileSystemExample()
+runMessagesExample()
