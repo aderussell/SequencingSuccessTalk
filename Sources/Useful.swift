@@ -16,12 +16,18 @@ extension Sequence where Element: Hashable {
     }
 }
 
-
 extension Collection where Index == Int {
     func adjustedOffset(_ offset: Int) -> Element {
         self[startIndex + offset]
     }
 }
+
+extension Sequence where Element: AdditiveArithmetic {
+    func sum() -> Element {
+        Self.reduce(.zero, +)
+    }
+}
+
 
 extension Collection {
     func indices(where predicate: @escaping (Self.Element) throws -> Bool) rethrows -> [Self.Index] {
