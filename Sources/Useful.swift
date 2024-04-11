@@ -24,7 +24,7 @@ extension Collection where Index == Int {
 
 extension Sequence where Element: AdditiveArithmetic {
     func sum() -> Element {
-        Self.reduce(.zero, +)
+        self.reduce(.zero, +)
     }
 }
 
