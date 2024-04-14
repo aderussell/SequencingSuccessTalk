@@ -7,9 +7,9 @@ import Foundation
 public struct RecursiveSequence<Base: Sequence, S1: Sequence>: Sequence where S1.Element == Base.Element {
     public typealias Element = Base.Element
     internal let base: Base
-    internal let keyPath: KeyPath<Base.Element, S1>
+    internal let keyPath: KeyPath<Element, S1>
     
-    public init(_ sequence: Base, keyPath: KeyPath<Base.Element, S1>) {
+    public init(_ sequence: Base, keyPath: KeyPath<Element, S1>) {
         self.base = sequence
         self.keyPath = keyPath
     }
@@ -24,9 +24,9 @@ public struct RecursiveSequence<Base: Sequence, S1: Sequence>: Sequence where S1
     
     public struct RecursiveIterator: IteratorProtocol {
         var stack: [Base.Element]
-        var keyPath: KeyPath<Base.Element, S1>
+        var keyPath: KeyPath<Element, S1>
         
-        init(base: Base, keyPath: KeyPath<Base.Element, S1>) {
+        init(base: Base, keyPath: KeyPath<Element, S1>) {
             self.stack = Array(base.reversed())
             self.keyPath = keyPath
         }

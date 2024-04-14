@@ -4,7 +4,7 @@
 
 import Foundation
 
-extension RecursiveSequence: Collection where Base: BidirectionalCollection, S1: BidirectionalCollection, S1.Index == Int, Base.Index == Int {
+extension RecursiveSequence: Collection where Base: Collection, S1: Collection, S1.Index == Int, Base.Index == Int {
     public typealias Index = IndexPath
     
     public var startIndex: IndexPath { IndexPath(index: 0) }
