@@ -13,6 +13,7 @@ extension RecursiveSequence where Self: Collection {
     func elements(along path: IndexPath) -> [Element] {
         return sequence(state: path) { state in
             defer { state = state.dropLast() }
+            guard !state.isEmpty else { return nil }
             return self[state]
         }.reversed()
     }
