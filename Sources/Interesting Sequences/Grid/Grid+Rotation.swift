@@ -49,13 +49,13 @@ extension Grid {
 extension Grid {
     mutating func rotateRight() {
         let columns = (0..<width).map { content(column: $0).reversed() }
-        elements = columns.flatMap { $0 }
+        elements = ContiguousArray(columns.lazy.flatMap { $0 })
         swap(&width, &height)
     }
 
     mutating func flip() {
         let columns = (0..<width).map { content(column: $0) }
-        elements = columns.reversed().flatMap { $0 }
+        elements = ContiguousArray(columns.lazy.reversed().flatMap { $0 })
     }
 }
 
