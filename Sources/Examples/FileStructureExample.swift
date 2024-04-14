@@ -5,11 +5,11 @@
 import Foundation
 import Algorithms
 
-indirect enum FileSystemItem {
+public indirect enum FileSystemItem {
     case file(name: String)
     case folder(name: String, children: [FileSystemItem])
     
-    var isFolder: Bool {
+    public var isFolder: Bool {
         switch self {
         case .file:
             return false
@@ -17,9 +17,9 @@ indirect enum FileSystemItem {
             return true
         }
     }
-    var isFile: Bool { !isFolder }
+    public var isFile: Bool { !isFolder }
     
-    var name: String {
+    public var name: String {
         switch self {
         case .file(let name):
             return name
@@ -28,7 +28,7 @@ indirect enum FileSystemItem {
         }
     }
     
-    var children: [FileSystemItem] {
+    public var children: [FileSystemItem] {
         switch self {
         case .file(_):
             return []
@@ -38,7 +38,7 @@ indirect enum FileSystemItem {
     }
 }
     
-let fileSystem: FileSystemItem = .folder(
+public let fileSystem: FileSystemItem = .folder(
     name: "Root",
     children: [
         .folder(
@@ -106,8 +106,6 @@ func runFileSystemExample() {
         .map { $0.name }
         .forEach { print($0) }
     
-    
-    
     print("-----------------------------")
     
     RecursiveSequence(element: fileSystem, keyPath: \.children)
@@ -121,10 +119,4 @@ func runFileSystemExample() {
         .map { "\(String(repeating: "\t", count: $0.count-1))\($1.name)" }
         .forEach { print($0) }
     
-    
-    let sequence = RecursiveSequence(element: fileSystem, keyPath: \.children)
-    let index = sequence
-        .firstIndex(where: { $0.isFile && $0.name.hasSuffix("png") })!
-    print(index)
-    print(sequence[index])
 }
