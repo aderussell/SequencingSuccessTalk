@@ -100,19 +100,19 @@ func makeMessageContent() -> [Message] {
         Message(date: currentDate.addingTimeInterval(960), attachment: nil, text: "Let me know what you think!"),
         
         // More photo messages
-        Message(date: currentDate.addingTimeInterval(1020), attachment: .photo(photoURL), text: ""),
-        Message(date: currentDate.addingTimeInterval(1080), attachment: .photo(photoURL), text: ""),
-        Message(date: currentDate.addingTimeInterval(1140), attachment: .photo(photoURL), text: ""),
+        Message(date: currentDate.addingTimeInterval(6020), attachment: .photo(photoURL), text: ""),
+        Message(date: currentDate.addingTimeInterval(6080), attachment: .photo(photoURL), text: ""),
+        Message(date: currentDate.addingTimeInterval(6140), attachment: .photo(photoURL), text: ""),
         
         // More video messages
-        Message(date: currentDate.addingTimeInterval(1200), attachment: .video(videoURL), text: ""),
-        Message(date: currentDate.addingTimeInterval(1260), attachment: .video(videoURL), text: ""),
-        Message(date: currentDate.addingTimeInterval(1320), attachment: .video(videoURL), text: ""),
+        Message(date: currentDate.addingTimeInterval(6200), attachment: .video(videoURL), text: ""),
+        Message(date: currentDate.addingTimeInterval(6260), attachment: .video(videoURL), text: ""),
+        Message(date: currentDate.addingTimeInterval(6320), attachment: .video(videoURL), text: ""),
         
         // Final text messages
-        Message(date: currentDate.addingTimeInterval(1380), attachment: nil, text: "I will!"),
-        Message(date: currentDate.addingTimeInterval(1440), attachment: nil, text: "Talk to you later."),
-        Message(date: currentDate.addingTimeInterval(1500), attachment: nil, text: "Bye!"),
+        Message(date: currentDate.addingTimeInterval(11380), attachment: nil, text: "I will!"),
+        Message(date: currentDate.addingTimeInterval(11440), attachment: nil, text: "Talk to you later."),
+        Message(date: currentDate.addingTimeInterval(11500), attachment: nil, text: "Bye!"),
     ]
     return messages
 }
