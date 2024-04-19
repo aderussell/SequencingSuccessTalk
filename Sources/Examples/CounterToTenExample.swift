@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// A very simple iterator example which will count through the integers from 0-9 inclusive.
+/// A very simple iterator example which will count through the integers from 1-10 inclusive.
 public struct CounterToTenIterator: IteratorProtocol {
     public typealias Element = Int
     private var val = 0
@@ -44,7 +44,7 @@ extension CounterToTenSequence: Collection {
     public var endIndex: Int { 10 }
     
     public subscript(position: Int) -> Int {
-        get { position }
+        get { position + 1 }
     }
     
     public func index(after i: Index) -> Index {
