@@ -29,4 +29,15 @@ final class FileReaderTests: XCTestCase {
             .prefix(6)
         XCTAssertEqual(Array(words), ["Adelarthrosomatous", "Adeling", "Adelite", "Adelocerous", "Adelocodonic", "Adelomorphic"])
     }
+    
+    
+    func testAsyncLines() async throws {
+        let url = URL(filePath: "/usr/share/dict/words")
+        let words = try await url.lines
+            .filter { $0.hasPrefix("ade") && $0.count > 6 }
+            .map { $0.capitalized }
+            .prefix(6)
+            .collect(into: Array.self)
+        XCTAssertEqual(Array(words), ["Adelarthrosomatous", "Adeling", "Adelite", "Adelocerous", "Adelocodonic", "Adelomorphic"])
+    }
 }
