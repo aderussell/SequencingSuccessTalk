@@ -10,6 +10,21 @@ import SequencingSuccessTalk
 
 final class DateStrideSequenceTests: XCTestCase {
     
+    func testDefaultStrideWithDate() {
+        let start = Date(timeIntervalSince1970: 1713655782)
+        let end   = Date(timeIntervalSince1970: 1713656082)
+        let dates = stride(from: start, through: end, by: 60)
+            .map { $0.timeIntervalSince1970 }
+            .toArray()
+        XCTAssertEqual(dates, [ 1713655782,
+                                1713655842,
+                                1713655902,
+                                1713655962,
+                                1713656022,
+                                1713656082 ])
+    }
+    
+    
     func testStrideDateTo() throws {
         let start = Date(timeIntervalSince1970: 1713655782)
         let end   = Date(timeIntervalSince1970: 1714174182)

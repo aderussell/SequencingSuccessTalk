@@ -14,6 +14,7 @@ public struct AsyncEnumeratedSequence<Base: AsyncSequence>: AsyncSequence {
         internal var idx: Int = 0
         
         public mutating func next() async throws -> Element? {
+            guard !Task.isCancelled else { return nil }
             let value = try await _base.next()
             guard let value else { return nil }
             defer { idx += 1 }
@@ -37,6 +38,7 @@ extension AsyncSequence {
 extension AsyncSequence {
     public func forEach(_ body: (Self.Element) async throws -> Void) async rethrows {
         for try await element in self {
+            guard !Task.isCancelled else { return }
             try await body(element)
         }
     }
