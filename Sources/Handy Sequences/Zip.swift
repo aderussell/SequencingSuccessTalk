@@ -63,6 +63,13 @@ public struct ZipSequence<S1: Sequence, S2: Sequence, each S: Sequence>: Sequenc
     }
 }
 
+/// Currently there is not a convenient way to inspect a parameter pack to determine if part of the pack is a nil by using `guard let` or similar.
+/// Additionally the elements within a pack cannot be mutated.
+/// To get around this, this method is used which will make a copy of the iterator and return it in a tuple to replace the older one.
+/// It will also throw if an iterator has finished to allow for the zip iterator to end,
+///
+/// None of this is ideal but will hopefully be rectified in swift 6.0 and later.
+/// https://github.com/apple/swift-evolution/blob/main/proposals/0408-pack-iteration.md
 private func nextFor<I: IteratorProtocol>(_ iterator: I) throws -> (I, I.Element) {
     var iterator = iterator
     guard let value = iterator.next() else { throw IteratorError.noMoreElements }
@@ -76,12 +83,4 @@ private enum IteratorError: Error {
 @available(macOS 14.0.0, *)
 public func zip<S1: Sequence, S2: Sequence, each S: Sequence>(_ first: S1, _ second: S2, _ seq: repeat each S) -> ZipSequence<S1, S2, repeat each S> {
     ZipSequence(_sequence1: first, _sequence2: second, sequences: (repeat each seq))
-}
-
-
-@inlinable
-internal func count<each T>(_ args: repeat each T) -> Int {
-  var count = 0
-  _ = (repeat (each args, count += 1))
-  return count
 }
