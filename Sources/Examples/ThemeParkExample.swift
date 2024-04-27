@@ -19,6 +19,12 @@ struct Attraction: Decodable {
         case land
         case attractionType = "type"
     }
+    
+    func canBeRidden(atHeight height: Int) -> Bool {
+        let max = maxHeight ?? .max
+        let min = minHeight ?? .zero
+        return (min...max).contains(height)
+    }
 }
 
 struct ThemePark: Decodable {
@@ -50,6 +56,11 @@ struct Base: Decodable {
     var parks: [ThemePark]
 }
 
+struct Person {
+    var name: String
+    var height: Int
+}
+
 func runThemeParkExample() {
     let semaphore = DispatchSemaphore(value: 0)
     Task {
@@ -60,6 +71,12 @@ func runThemeParkExample() {
 }
 
 func loadThemeParkContent() async throws {
+    let people = [
+        Person(name: "Adrian", height: 70),
+        Person(name: "Marie", height: 61),
+        Person(name: "Sully", height: 40)
+    ]
+    
     let urlSession = URLSession.shared
     let url = URL(string: "https://adrianrussell.co.uk/demos/heights/data.json")!
     let (data, _) = try await urlSession.data(from: url)
@@ -70,10 +87,7 @@ func loadThemeParkContent() async throws {
         .lazy
         .filter { $0.resort == "wdw" }
         .flatMap { $0.rides }
-        .filter {
-            guard let height = $0.maxHeight else { return true }
-            return height >= 40
-        }
+        .filter { ride in people.allSatisfy({ ride.canBeRidden(atHeight: $0.height) }) }
         .grouped(by: \.land)
         .sorted(by: { $0.0 ?? "" < $1.0 ?? "" })
         .forEach { (key, value) in
