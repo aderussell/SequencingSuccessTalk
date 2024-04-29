@@ -53,9 +53,35 @@ final class GridTests: XCTestCase {
         var iterator = windows.makeIterator()
         XCTAssertEqual(Array(iterator.next()!), [1, 2, 5, 6])
         XCTAssertEqual(Array(iterator.next()!), [2, 3, 6, 7])
+        XCTAssertEqual(Array(iterator.next()!), [3, 4, 7, 8])
         XCTAssertEqual(Array(iterator.next()!), [5, 6, 9, 8])
         XCTAssertEqual(Array(iterator.next()!), [6, 7, 8, 7])
+        XCTAssertEqual(Array(iterator.next()!), [7, 8, 7, 6])
         XCTAssertEqual(Array(iterator.next()!), [9, 8, 0, 2])
+        XCTAssertEqual(Array(iterator.next()!), [8, 7, 2, 3])
+        XCTAssertEqual(Array(iterator.next()!), [7, 6, 3, 4])
+        XCTAssertNil(iterator.next())
+    }
+    
+    func test_rows() {
+        let grid = Grid(elements: [[1,2,3,4],[5,6,7,8],[9,8,7,6],[0,2,3,4]])
+        let windows = grid.windows(width: 4, height: 1)
+        var iterator = windows.makeIterator()
+        XCTAssertEqual(Array(iterator.next()!), [1,2,3,4])
+        XCTAssertEqual(Array(iterator.next()!), [5,6,7,8])
+        XCTAssertEqual(Array(iterator.next()!), [9,8,7,6])
+        XCTAssertEqual(Array(iterator.next()!), [0,2,3,4])
+        XCTAssertNil(iterator.next())
+    }
+    
+    func test_columns() {
+        let grid = Grid(elements: [[1,2,3,4],[5,6,7,8],[9,8,7,6],[0,2,3,4]])
+        let windows = grid.windows(width: 1, height: 4)
+        var iterator = windows.makeIterator()
+        XCTAssertEqual(Array(iterator.next()!), [1, 5, 9, 0])
+        XCTAssertEqual(Array(iterator.next()!), [2, 6, 8, 2])
+        XCTAssertEqual(Array(iterator.next()!), [3, 7, 7, 3])
+        XCTAssertEqual(Array(iterator.next()!), [4, 8, 6, 4])
         XCTAssertNil(iterator.next())
     }
     

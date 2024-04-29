@@ -19,11 +19,11 @@ public struct GridWindowedSequence<T>: Sequence {
         internal var y = 0
         
         public mutating func next() -> Element? {
-            guard y < base.height - height else { return nil }
-            if x >= base.width - width {
+            if x > base.width - width {
                 y += 1
                 x = 0
             }
+            guard y <= base.height - height else { return nil }
             defer { x += 1 }
             return base.subgrid(origin: .init(x: x, y: y), width: width, height: height)
         }
