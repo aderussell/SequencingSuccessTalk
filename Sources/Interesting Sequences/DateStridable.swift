@@ -102,3 +102,10 @@ public func strideDate(through interval: DateInterval, by: DateComponents, calen
     DateStrideThroughSequence(_start: interval.start, _end: interval.end, stride: by, calendar: calendar)
 }
 
+
+
+extension DateInterval {
+    func stride(by: DateComponents, calendar: Calendar = .current) -> DateStrideThroughSequence {
+        DateStrideThroughSequence(_start: start, _end: end, stride: by, calendar: calendar)
+    }
+}
