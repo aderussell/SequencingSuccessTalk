@@ -11,6 +11,7 @@ extension DateComponents {
     public static func days(_ value: Int) -> Self { .init(day: value) }
     public static func weeks(_ value: Int) -> Self { .init(weekOfYear: value) }
     public static func months(_ value: Int) -> Self { .init(month: value) }
+    public static func years(_ value: Int) -> Self { .init(year: value) }
 }
 
 public struct DateStrideSequence: Sequence {
