@@ -9,7 +9,7 @@ import AppKit
 
 /// A sequence which will step through the points for drawing a spirograph shape with the specified radii & distances
 func spirograph(innerRadius: Double, outerRadius: Double, distance: Double) -> some Sequence<CGPoint> {
-    let Δradius = innerRadius - outerRadius
+    let Δradius = outerRadius - innerRadius
     let Δtheta = 0.01
     return sequence(state: 0.0) { theta in
         let x = Δradius * cos(theta) + distance * cos(Δradius * theta / outerRadius)
@@ -32,34 +32,38 @@ extension Sequence {
     }
 }
 
-extension CGMutablePath {
-    static func create(initialPosition: CGPoint) -> Self {
-        let path = Self()
-        path.move(to: initialPosition)
-        return path
-    }
-}
-
 extension CGPoint {
     static func + (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
         CGPoint(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
     }
+    
+    static func * (lhs: CGPoint, rhs: Double) -> CGPoint {
+        CGPoint(x: lhs.x * rhs, y: lhs.y * rhs)
+    }
 }
 
 
+fileprivate let imageSize = 1000
+fileprivate let patternOffset = CGPoint(x: imageSize / 2, y: imageSize / 2)
+
 func runSpirographExample() {
-    let path = spirograph(innerRadius: 105, outerRadius: 12, distance: 7)
+    let scale = 3.0
+    let path = spirograph(innerRadius: 105, outerRadius: 12, distance: 31)
         .prefix(100_000)
-        .map { $0 + CGPoint(x: 200, y: 200) }
-        .reduce(first: { CGMutablePath.create(initialPosition: $0) }) { partialResult, point in
+        .map { ($0 * scale) + patternOffset }
+        .reduce(first: { point in
+            let path = CGMutablePath()
+            path.move(to: point)
+            return path
+        }, updateAccumulatingResult: { partialResult, point in
             partialResult.addLine(to: point)
-        }
+        })
     
     guard let path else { return }
     
     let context = CGContext(data: nil,
-                            width: Int(400),
-                            height: Int(400),
+                            width: imageSize,
+                            height: imageSize,
                             bitsPerComponent: 8,
                             bytesPerRow: 0,
                             space: CGColorSpace(name: CGColorSpace.sRGB)!,
@@ -78,11 +82,12 @@ func runSpirographExample() {
 
 
 func runSpirographExample_gradient() {
+    let scale = 7.0
     
     let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)!
     let context = CGContext(data: nil,
-                            width: Int(400),
-                            height: Int(400),
+                            width: imageSize,
+                            height: imageSize,
                             bitsPerComponent: 8,
                             bytesPerRow: 0,
                             space: colorSpace,
@@ -90,9 +95,9 @@ func runSpirographExample_gradient() {
     context.saveGState()
     
     
-    spirograph(innerRadius: 38, outerRadius: 71, distance: 14)
-        .prefix(10_000)
-        .map { $0 + CGPoint(x: 200, y: 200) }
+    spirograph(innerRadius: 38, outerRadius: 71, distance: 28)
+        .prefix(100_000)
+        .map { ($0 * scale) + patternOffset }
         .adjacentPairs()
         .enumerated()
         .forEach({ element in
