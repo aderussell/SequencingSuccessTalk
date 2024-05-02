@@ -95,4 +95,13 @@ final class GridTests: XCTestCase {
         XCTAssertEqual(Array(iterator.next()!), [2, 4, 1, 3])
         XCTAssertNil(iterator.next())
     }
+    
+    func test_border() {
+        let grid = Grid(elements: [[1,2,3,4],
+                                   [5,6,7,8],
+                                   [9,8,7,6],
+                                   [0,2,3,4]])
+        let border = grid.border(from: Point(x: 1, y: 1), width: 1, height: 1)
+        XCTAssertEqual(Array(border), [1,2,3,7,7,8,9,5])
+    }
 }

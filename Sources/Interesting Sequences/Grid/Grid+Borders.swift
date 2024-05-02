@@ -72,16 +72,17 @@ public struct GridAdjacentBorderIterator<Element>: Collection {
         // bottom
         if maxY < grid.height {
             if minX >= 0 {
-                points.append(.init(x: minX, y: maxY))
+            if includeDiagonals, maxX < grid.width {
+                points.append(.init(x: maxX, y: maxY))
             }
-
+            
             let end = Swift.min(origin.x + width, grid.width)
             for x in origin.x..<end {
                 points.append(.init(x: x, y: maxY))
             }
-
-            if includeDiagonals, maxX < grid.width {
-                points.append(.init(x: maxX, y: maxY))
+            
+            if minX >= 0 {
+                points.append(.init(x: minX, y: maxY))
             }
         }
 
@@ -98,7 +99,7 @@ public struct GridAdjacentBorderIterator<Element>: Collection {
 }
 
 extension Grid {
-    func border(from origin: Point<Int>, width: Int, height: Int, includeDiagonals: Bool = true) -> GridAdjacentBorderIterator<Element> {
+    public func border(from origin: Point<Int>, width: Int, height: Int, includeDiagonals: Bool = true) -> GridAdjacentBorderIterator<Element> {
         GridAdjacentBorderIterator(grid: self, origin: origin, width: width, height: height, includeDiagonals: includeDiagonals)
     }
 }
