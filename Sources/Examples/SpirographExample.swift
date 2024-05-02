@@ -17,7 +17,6 @@ func spirograph(innerRadius: Double, outerRadius: Double, distance: Double) -> s
         theta += Δtheta
         return CGPoint(x: x, y: y)
     }
-    
 }
 
 extension Sequence {
@@ -39,6 +38,22 @@ extension CGPoint {
     
     static func * (lhs: CGPoint, rhs: Double) -> CGPoint {
         CGPoint(x: lhs.x * rhs, y: lhs.y * rhs)
+    }
+}
+
+extension CGPath {
+    static func line(from: CGPoint, to: CGPoint) -> CGPath {
+        let path = CGMutablePath()
+        path.move(to: from)
+        path.addLine(to: to)
+        return path
+    }
+}
+
+extension CGColor {
+    static func hue(_ hue: CGFloat) -> CGColor {
+        let color = NSColor(hue: hue, saturation: 1.0, brightness: 1.0, alpha: 1.0)
+        return color.cgColor
     }
 }
 
@@ -85,38 +100,34 @@ func runSpirographExample_gradient() {
     let scale = 7.0
     
     let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)!
-    let context = CGContext(data: nil,
-                            width: imageSize,
-                            height: imageSize,
-                            bitsPerComponent: 8,
-                            bytesPerRow: 0,
-                            space: colorSpace,
-                            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
-    context.saveGState()
-    
-    
-    spirograph(innerRadius: 38, outerRadius: 71, distance: 28)
-        .prefix(100_000)
-        .map { ($0 * scale) + patternOffset }
-        .adjacentPairs()
-        .enumerated()
-        .forEach({ element in
-            let (index, points) = element
-            let (pointA, pointB) = points
-            
-            let path = CGMutablePath()
-            path.move(to: pointA)
-            path.addLine(to: pointB)
-            
-            context.saveGState()
-            context.addPath(path)
-            context.setLineWidth(1.0)
-            let color = NSColor(hue: (Double(index) / 255.0).truncatingRemainder(dividingBy: 1.0), saturation: 1.0, brightness: 1.0, alpha: 1.0)
-            let cgColor = color.cgColor
-            context.setStrokeColor(cgColor)
-            context.strokePath()
-            context.restoreGState()
-        })
+let context = CGContext(data: nil,
+                        width: imageSize,
+                        height: imageSize,
+                        bitsPerComponent: 8,
+                        bytesPerRow: 0,
+                        space: colorSpace,
+                        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+context.saveGState()
+
+
+spirograph(innerRadius: 38, outerRadius: 71, distance: 28)
+    .prefix(100_000)
+    .map { ($0 * scale) + patternOffset }
+    .adjacentPairs()
+    .enumerated()
+    .forEach({ (index, points) in
+        let (pointA, pointB) = points
+        
+        let path = CGPath.line(from: pointA, to: pointB)
+        
+        context.saveGState()
+        context.addPath(path)
+        context.setLineWidth(1.0)
+        let hue = (Double(index) / 255.0).truncatingRemainder(dividingBy: 1.0)
+        context.setStrokeColor(.hue(hue))
+        context.strokePath()
+        context.restoreGState()
+    })
     
     let image = context.makeImage()
     context.restoreGState()
