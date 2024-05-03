@@ -96,12 +96,46 @@ final class GridTests: XCTestCase {
         XCTAssertNil(iterator.next())
     }
     
-    func test_border() {
+    func test_border_2x2() {
+        let grid = Grid(elements: [[1,2],
+                                   [3,4]])
+        let border = grid.border()
+        XCTAssertEqual(Array(border), [1,2,4,3])
+    }
+                                   
+    func test_border_4x4() {
+        let grid = Grid(elements: [[1,2,3,4],
+                                   [5,6,7,8],
+                                   [9,8,7,6],
+                                   [0,2,3,4]])
+        let border = grid.border()
+        XCTAssertEqual(Array(border), [1,2,3,4,8,6,4,3,2,0,9,5])
+    }
+    
+    func test_border_fromPoint_1x1() {
         let grid = Grid(elements: [[1,2,3,4],
                                    [5,6,7,8],
                                    [9,8,7,6],
                                    [0,2,3,4]])
         let border = grid.border(from: Point(x: 1, y: 1), width: 1, height: 1)
+        XCTAssertEqual(Array(border), [6])
+    }
+    
+    func test_border_aroundPoint_3x3() {
+        let grid = Grid(elements: [[1,2,3,4],
+                                   [5,6,7,8],
+                                   [9,8,7,6],
+                                   [0,2,3,4]])
+        let border = grid.border(center: Point(x: 1, y: 1), distanceX: 1, distanceY: 1)
         XCTAssertEqual(Array(border), [1,2,3,7,7,8,9,5])
+    }
+    
+    func test_border_fromPoint_noDiagonals() {
+        let grid = Grid(elements: [[1,2,3,4],
+                                   [5,6,7,8],
+                                   [9,8,7,6],
+                                   [0,2,3,4]])
+        let border = grid.border(center: Point(x: 1, y: 1), distanceX: 1, distanceY: 1, includeDiagonals: false)
+        XCTAssertEqual(Array(border), [2,7,8,5])
     }
 }
