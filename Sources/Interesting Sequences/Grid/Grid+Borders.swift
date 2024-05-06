@@ -40,8 +40,8 @@ public struct GridAdjacentBorderIterator<Element>: Collection {
     
     
     static func wrapCandidate(offset: Point<Int>, origin: Point<Int>, width: Int, height: Int) -> Point<Int>? {
-        return Point(x: (origin.x + offset.x) % width,
-                     y: (origin.y + offset.y) % height)
+        return Point(x: (origin.x + offset.x + width) % width,
+                     y: (origin.y + offset.y + height) % height)
     }
     
     static func clipCandidate(offset: Point<Int>, origin: Point<Int>, width: Int, height: Int) -> Point<Int>? {
@@ -73,7 +73,7 @@ public struct GridAdjacentBorderIterator<Element>: Collection {
         
         
         let points = chain(chain(chain(topOffsets, rightOffsets), bottomOffsets), leftOffsets)
-            .compactMap { candidateCheck($0, origin, width, height) }
+            .compactMap { candidateCheck($0, origin, grid.width, grid.height) }
         
         return points
     }
@@ -96,10 +96,10 @@ extension Grid {
                        includeDiagonals: Bool = true,
                        wrapGrid: Bool = false) -> GridAdjacentBorderIterator<Element> {
         GridAdjacentBorderIterator(grid: self,
-                                     origin: center - Point(x: distanceX, y: distanceY),
-                                     width: 1 + distanceX + distanceX,
-                                     height: 1 + distanceY + distanceY,
-                                     includeDiagonals: includeDiagonals,
-                                     wrap: wrapGrid)
+                                   origin: center - Point(x: distanceX, y: distanceY),
+                                   width: 1 + distanceX + distanceX,
+                                   height: 1 + distanceY + distanceY,
+                                   includeDiagonals: includeDiagonals,
+                                   wrap: wrapGrid)
     }
 }
