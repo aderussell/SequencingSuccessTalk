@@ -100,35 +100,82 @@ func runSpirographExample_gradient() {
     let scale = 7.0
     
     let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)!
-let context = CGContext(data: nil,
-                        width: imageSize,
-                        height: imageSize,
-                        bitsPerComponent: 8,
-                        bytesPerRow: 0,
-                        space: colorSpace,
-                        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
-context.saveGState()
+    let context = CGContext(data: nil,
+                            width: imageSize,
+                            height: imageSize,
+                            bitsPerComponent: 8,
+                            bytesPerRow: 0,
+                            space: colorSpace,
+                            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+    context.saveGState()
 
-
-spirograph(innerRadius: 38, outerRadius: 71, distance: 28)
-    .prefix(100_000)
-    .map { ($0 * scale) + patternOffset }
-    .adjacentPairs()
-    .enumerated()
-    .forEach({ (index, points) in
-        let (pointA, pointB) = points
-        
-        let path = CGPath.line(from: pointA, to: pointB)
-        
-        context.saveGState()
-        context.addPath(path)
-        context.setLineWidth(1.0)
-        let hue = (Double(index) / 255.0).truncatingRemainder(dividingBy: 1.0)
-        context.setStrokeColor(.hue(hue))
-        context.strokePath()
-        context.restoreGState()
-    })
+    spirograph(innerRadius: 38, outerRadius: 71, distance: 28)
+        .prefix(100_000)
+        .map { ($0 * scale) + patternOffset }
+        .adjacentPairs()
+        .enumerated()
+        .forEach({ (index, points) in
+            let (pointA, pointB) = points
+            
+            let path = CGPath.line(from: pointA, to: pointB)
+            
+            context.saveGState()
+            context.addPath(path)
+            context.setLineWidth(1.0)
+            let hue = (Double(index) / 255.0).truncatingRemainder(dividingBy: 1.0)
+            context.setStrokeColor(.hue(hue))
+            context.strokePath()
+            context.restoreGState()
+        })
     
     let image = context.makeImage()
+    context.restoreGState()
+}
+
+@available(macOS 13.0, *)
+func runSpirographExample_exportingAnimation() throws {
+    let scale = 7.0
+    
+    let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)!
+    let context = CGContext(data: nil,
+                            width: imageSize,
+                            height: imageSize,
+                            bitsPerComponent: 8,
+                            bytesPerRow: 0,
+                            space: colorSpace,
+                            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+    context.saveGState()
+    
+    var downloadsFolder = try FileManager().url(for: .downloadsDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+    downloadsFolder.append(path: "spirograph_images", directoryHint: .isDirectory)
+    try FileManager().createDirectory(at: downloadsFolder, withIntermediateDirectories: true)
+
+    spirograph(innerRadius: 38, outerRadius: 71, distance: 28)
+        .prefix(100_000)
+        .map { ($0 * scale) + patternOffset }
+        .adjacentPairs()
+        .enumerated()
+        .forEach({ (index, points) in
+            let (pointA, pointB) = points
+            
+            let path = CGPath.line(from: pointA, to: pointB)
+            
+            context.saveGState()
+            context.addPath(path)
+            context.setLineWidth(1.0)
+            let hue = (Double(index) / 255.0).truncatingRemainder(dividingBy: 1.0)
+            context.setStrokeColor(.hue(hue))
+            context.strokePath()
+            context.restoreGState()
+            
+            let image = context.makeImage()
+            let destination = downloadsFolder.appending(components: "\(String(format: "%05d", index)).png", directoryHint: .notDirectory)
+            
+            if index.isMultiple(of: 100), let image, let destination = CGImageDestinationCreateWithURL(destination as CFURL, kUTTypePNG, 1, nil) {
+                CGImageDestinationAddImage(destination, image, nil)
+                CGImageDestinationFinalize(destination)
+            }
+        })
+    
     context.restoreGState()
 }
