@@ -64,6 +64,7 @@ fileprivate let patternOffset = CGPoint(x: imageSize / 2, y: imageSize / 2)
 func runSpirographExample() {
     let scale = 3.0
     let path = spirograph(innerRadius: 105, outerRadius: 12, distance: 31)
+        .lazy
         .prefix(100_000)
         .map { ($0 * scale) + patternOffset }
         .reduce(first: { point in
@@ -107,29 +108,29 @@ func runSpirographExample_gradient() {
                             bytesPerRow: 0,
                             space: colorSpace,
                             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
-    context.saveGState()
 
-    spirograph(innerRadius: 38, outerRadius: 71, distance: 28)
-        .prefix(100_000)
-        .map { ($0 * scale) + patternOffset }
-        .adjacentPairs()
-        .enumerated()
-        .forEach({ (index, points) in
-            let (pointA, pointB) = points
-            
-            let path = CGPath.line(from: pointA, to: pointB)
-            
-            context.saveGState()
-            context.addPath(path)
-            context.setLineWidth(1.0)
-            let hue = (Double(index) / 255.0).truncatingRemainder(dividingBy: 1.0)
-            context.setStrokeColor(.hue(hue))
-            context.strokePath()
-            context.restoreGState()
-        })
-    
-    let image = context.makeImage()
-    context.restoreGState()
+let image = spirograph(innerRadius: 38, outerRadius: 71, distance: 28)
+    .lazy
+    .prefix(100_000)
+    .map { ($0 * scale) + patternOffset }
+    .adjacentPairs()
+    .map { pointA, pointB in CGPath.line(from: pointA, to: pointB) }
+    .enumerated()
+    .lazy
+    .map { index, path in
+        let hue = (Double(index) / 255.0).truncatingRemainder(dividingBy: 1.0)
+        return (hue, path)
+    }
+    .reduce(into: context) { context, content in
+        let (hue, path) = content
+        context.saveGState()
+        context.addPath(path)
+        context.setStrokeColor(.hue(hue))
+        context.strokePath()
+        context.restoreGState()
+    }
+    .makeImage()
+    print(image)
 }
 
 @available(macOS 13.0, *)
@@ -151,27 +152,25 @@ func runSpirographExample_exportingAnimation() throws {
     try FileManager().createDirectory(at: downloadsFolder, withIntermediateDirectories: true)
 
     spirograph(innerRadius: 38, outerRadius: 71, distance: 28)
-        .prefix(100_000)
+        .lazy
+        .prefix(45_000)
         .map { ($0 * scale) + patternOffset }
         .adjacentPairs()
+        .map { pointA, pointB in CGPath.line(from: pointA, to: pointB) }
         .enumerated()
-        .forEach({ (index, points) in
-            let (pointA, pointB) = points
-            
-            let path = CGPath.line(from: pointA, to: pointB)
-            
+        .forEach({ (index, path) in
             context.saveGState()
             context.addPath(path)
-            context.setLineWidth(1.0)
             let hue = (Double(index) / 255.0).truncatingRemainder(dividingBy: 1.0)
             context.setStrokeColor(.hue(hue))
             context.strokePath()
             context.restoreGState()
             
-            let image = context.makeImage()
             let destination = downloadsFolder.appending(components: "\(String(format: "%05d", index)).png", directoryHint: .notDirectory)
             
-            if index.isMultiple(of: 100), let image, let destination = CGImageDestinationCreateWithURL(destination as CFURL, kUTTypePNG, 1, nil) {
+            if index.isMultiple(of: 100),
+                let image = context.makeImage(), 
+                let destination = CGImageDestinationCreateWithURL(destination as CFURL, kUTTypePNG, 1, nil) {
                 CGImageDestinationAddImage(destination, image, nil)
                 CGImageDestinationFinalize(destination)
             }
