@@ -5,7 +5,6 @@
 import Foundation
 import CoreGraphics
 import Algorithms
-import AppKit
 
 /// A sequence which will step through the points for drawing a spirograph shape with the specified radii & distances
 func spirograph(innerRadius: Double, outerRadius: Double, distance: Double) -> some Sequence<CGPoint> {
@@ -31,29 +30,16 @@ extension Sequence {
     }
 }
 
-extension CGPoint {
-    static func + (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
-        CGPoint(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
-    }
-    
-    static func * (lhs: CGPoint, rhs: Double) -> CGPoint {
-        CGPoint(x: lhs.x * rhs, y: lhs.y * rhs)
-    }
-}
-
-extension CGPath {
-    static func line(from: CGPoint, to: CGPoint) -> CGPath {
-        let path = CGMutablePath()
-        path.move(to: from)
-        path.addLine(to: to)
-        return path
-    }
-}
-
-extension CGColor {
-    static func hue(_ hue: CGFloat) -> CGColor {
-        let color = NSColor(hue: hue, saturation: 1.0, brightness: 1.0, alpha: 1.0)
-        return color.cgColor
+extension Sequence where Element == CGPoint {
+    func path() -> CGPath? {
+        let path = reduce(first: { point in
+            let path = CGMutablePath()
+            path.move(to: point)
+            return path
+        }, updateAccumulatingResult: { partialResult, point in
+            partialResult.addLine(to: point)
+        })
+        return path?.copy()
     }
 }
 
@@ -67,13 +53,7 @@ func runSpirographExample() {
         .lazy
         .prefix(100_000)
         .map { ($0 * scale) + patternOffset }
-        .reduce(first: { point in
-            let path = CGMutablePath()
-            path.move(to: point)
-            return path
-        }, updateAccumulatingResult: { partialResult, point in
-            partialResult.addLine(to: point)
-        })
+        .path()
     
     guard let path else { return }
     
@@ -169,10 +149,8 @@ func runSpirographExample_exportingAnimation() throws {
             let destination = downloadsFolder.appending(components: "\(String(format: "%05d", index)).png", directoryHint: .notDirectory)
             
             if index.isMultiple(of: 100),
-                let image = context.makeImage(), 
-                let destination = CGImageDestinationCreateWithURL(destination as CFURL, kUTTypePNG, 1, nil) {
-                CGImageDestinationAddImage(destination, image, nil)
-                CGImageDestinationFinalize(destination)
+                let image = context.makeImage() {
+                image.save(to: destination)
             }
         })
     
