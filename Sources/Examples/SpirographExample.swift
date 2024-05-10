@@ -125,7 +125,6 @@ func runSpirographExample_exportingAnimation() throws {
                             bytesPerRow: 0,
                             space: colorSpace,
                             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
-    context.saveGState()
     
     var downloadsFolder = try FileManager().url(for: .downloadsDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
     downloadsFolder.append(path: "spirograph_images", directoryHint: .isDirectory)
@@ -138,21 +137,25 @@ func runSpirographExample_exportingAnimation() throws {
         .adjacentPairs()
         .map { pointA, pointB in CGPath.line(from: pointA, to: pointB) }
         .enumerated()
-        .forEach({ (index, path) in
-            context.saveGState()
-            context.addPath(path)
+        .lazy
+        .map { index, path in
             let hue = (Double(index) / 255.0).truncatingRemainder(dividingBy: 1.0)
-            context.setStrokeColor(.hue(hue))
-            context.strokePath()
-            context.restoreGState()
-            
+            return (hue, path)
+        }
+        .chunked(ofCount: 100)
+        .compactMap { chunk in
+            chunk.reduce(into: context, { context, content in
+                let (hue, path) = content
+                context.saveGState()
+                context.addPath(path)
+                context.setStrokeColor(.hue(hue))
+                context.strokePath()
+                context.restoreGState()
+            }).makeImage()
+        }
+        .enumerated()
+        .forEach { index, image in
             let destination = downloadsFolder.appending(components: "\(String(format: "%05d", index)).png", directoryHint: .notDirectory)
-            
-            if index.isMultiple(of: 100),
-                let image = context.makeImage() {
-                image.save(to: destination)
-            }
-        })
-    
-    context.restoreGState()
+            image.save(to: destination)
+        }
 }
