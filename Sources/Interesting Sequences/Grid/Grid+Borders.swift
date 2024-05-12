@@ -5,7 +5,7 @@
 import Foundation
 import Algorithms
 
-public struct GridAdjacentBorderIterator<Element>: Collection {
+public struct GridBorderSequence<Element>: Collection {
     public typealias Index = Grid<Element>.Index
     
     fileprivate let grid: Grid<Element>
@@ -68,19 +68,19 @@ public struct GridAdjacentBorderIterator<Element>: Collection {
 
 
 extension Grid {
-    public func border() -> GridAdjacentBorderIterator<Element> {
-        GridAdjacentBorderIterator(grid: self, origin: .zero, width: width, height: height, includeDiagonals: true, wrap: false)
+    public func border() -> GridBorderSequence<Element> {
+        GridBorderSequence(grid: self, origin: .zero, width: width, height: height, includeDiagonals: true, wrap: false)
     }
     
-    public func border(from origin: Point<Int>, width: Int, height: Int, includeDiagonals: Bool = true) -> GridAdjacentBorderIterator<Element> {
-        GridAdjacentBorderIterator(grid: self, origin: origin, width: width, height: height, includeDiagonals: includeDiagonals, wrap: false)
+    public func border(from origin: Point<Int>, width: Int, height: Int, includeDiagonals: Bool = true) -> GridBorderSequence<Element> {
+        GridBorderSequence(grid: self, origin: origin, width: width, height: height, includeDiagonals: includeDiagonals, wrap: false)
     }
     
     public func border(center: Point<Int>,
                        distanceX: Int = 1, distanceY: Int = 1, 
                        includeDiagonals: Bool = true,
-                       wrapGrid: Bool = false) -> GridAdjacentBorderIterator<Element> {
-        GridAdjacentBorderIterator(grid: self,
+                       wrapGrid: Bool = false) -> GridBorderSequence<Element> {
+        GridBorderSequence(grid: self,
                                    origin: center - Point(x: distanceX, y: distanceY),
                                    width: 1 + distanceX + distanceX,
                                    height: 1 + distanceY + distanceY,
