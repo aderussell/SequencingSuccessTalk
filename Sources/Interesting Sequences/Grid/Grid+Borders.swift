@@ -9,24 +9,14 @@ public struct GridAdjacentBorderIterator<Element>: Collection {
     public typealias Index = Grid<Element>.Index
     
     fileprivate let grid: Grid<Element>
-    fileprivate let origin: Point<Int>
-    fileprivate let width: Int
-    fileprivate let height: Int
-    
     public let indices: Array<Point<Int>>
-    
     public var count: Int { indices.count }
-    
     
     init(grid: Grid<Element>, origin: Point<Int>, width: Int, height: Int, includeDiagonals: Bool, wrap: Bool) {
         self.grid = grid
-        self.origin = origin
-        self.width = width
-        self.height = height
         let candidateCheck = wrap ? Self.wrapCandidate(offset:origin:width:height:) : Self.clipCandidate(offset:origin:width:height:)
         self.indices = Self.calculateBorder(grid: grid, origin: origin, width: width, height: height, includeDiagonals: includeDiagonals, candidateCheck: candidateCheck)
     }
-    
     
     public var startIndex: Grid<Element>.Index { indices[0] }
     public var endIndex: Grid<Element>.Index { grid.endIndex }
@@ -38,7 +28,6 @@ public struct GridAdjacentBorderIterator<Element>: Collection {
         return indices[idx + 1]
     }
     
-    
     static func wrapCandidate(offset: Point<Int>, origin: Point<Int>, width: Int, height: Int) -> Point<Int>? {
         return Point(x: (origin.x + offset.x + width) % width,
                      y: (origin.y + offset.y + height) % height)
@@ -49,8 +38,6 @@ public struct GridAdjacentBorderIterator<Element>: Collection {
         guard (0..<width).contains(candidateOffset.x) && (0..<height).contains(candidateOffset.y) else { return nil }
         return candidateOffset
     }
-    
-    
 
     private static func calculateBorder(grid: Grid<Element>, 
                                         origin: Point<Int>,
@@ -80,12 +67,10 @@ public struct GridAdjacentBorderIterator<Element>: Collection {
 }
 
 
-
 extension Grid {
     public func border() -> GridAdjacentBorderIterator<Element> {
         GridAdjacentBorderIterator(grid: self, origin: .zero, width: width, height: height, includeDiagonals: true, wrap: false)
     }
-    
     
     public func border(from origin: Point<Int>, width: Int, height: Int, includeDiagonals: Bool = true) -> GridAdjacentBorderIterator<Element> {
         GridAdjacentBorderIterator(grid: self, origin: origin, width: width, height: height, includeDiagonals: includeDiagonals, wrap: false)
