@@ -37,6 +37,12 @@ public indirect enum FileSystemItem {
         }
     }
 }
+
+extension FileSystemItem: Sequence {
+    public func makeIterator() -> some IteratorProtocol<Self> {
+        RecursiveSequence.Iterator(base: CollectionOfOne(self), keyPath: \.children)
+    }
+}
     
 public let fileSystem: FileSystemItem = .folder(
     name: "Root",
@@ -117,6 +123,13 @@ func runFileSystemExample() {
         .lazy
         .indexed()
         .map { "\(String(repeating: "\t", count: $0.count-1))\($1.name)" }
+        .forEach { print($0) }
+    
+    print("-----------------------------")
+    
+    fileSystem
+        .lazy
+        .map { $0.name }
         .forEach { print($0) }
     
 }

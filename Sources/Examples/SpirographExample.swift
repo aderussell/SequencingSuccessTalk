@@ -142,7 +142,7 @@ func runSpirographExample_exportingAnimation() throws {
             let hue = (Double(index) / 255.0).truncatingRemainder(dividingBy: 1.0)
             return (hue, path)
         }
-        .chunked(ofCount: 100)
+        .chunks(ofCount: 100)
         .compactMap { chunk in
             chunk.reduce(into: context, { context, content in
                 let (hue, path) = content
