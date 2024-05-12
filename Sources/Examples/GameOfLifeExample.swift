@@ -5,8 +5,10 @@
 import Foundation
 
 extension Grid where Element == Int {
-    func gameOfLife(alive: Int = 1, dead: Int = 0) -> Self {
+    func gameOfLife() -> Self {
         indices.reduce(into: Grid(width: width, height: height, initial: 0)) { newGrid, point in
+            let alive: Int = 1
+            let dead: Int = 0
             let count = self.border(center: point, wrapGrid: true).sum()
             newGrid[point] = dead
             if count == 3 {
