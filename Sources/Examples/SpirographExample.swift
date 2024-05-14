@@ -160,7 +160,7 @@ func runSpirographExample_exportingAnimation() throws {
     downloadsFolder.append(path: "spirograph_images", directoryHint: .isDirectory)
     try FileManager().createDirectory(at: downloadsFolder, withIntermediateDirectories: true)
 
-    spirograph(innerRadius: 38, outerRadius: 71, distance: 28)
+    spirograph(innerRadius: 71, outerRadius: 38, distance: 28)
         .lazy
         .prefix(45_000)
         .map { ($0 * scale) + patternOffset }
@@ -172,7 +172,7 @@ func runSpirographExample_exportingAnimation() throws {
             let hue = (Double(index) / 255.0).truncatingRemainder(dividingBy: 1.0)
             return (hue, path)
         }
-        .chunks(ofCount: 100)
+        .chunks(ofCount: 200)
         .compactMap { chunk in
             chunk.reduce(into: context, { context, content in
                 let (hue, path) = content
