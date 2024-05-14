@@ -11,8 +11,8 @@ func spirograph(innerRadius: Double, outerRadius: Double, distance: Double) -> s
     let Δradius = outerRadius - innerRadius
     let Δtheta = 0.01
     return sequence(state: 0.0) { theta in
-        let x = Δradius * cos(theta) + distance * cos(Δradius * theta / outerRadius)
-        let y = Δradius * sin(theta) + distance * sin(Δradius * theta / outerRadius)
+        let x = Δradius * cos(theta) + distance * cos(Δradius * theta / innerRadius)
+        let y = Δradius * sin(theta) + distance * sin(Δradius * theta / innerRadius)
         theta += Δtheta
         return CGPoint(x: x, y: y)
     }
@@ -49,7 +49,7 @@ fileprivate let patternOffset = CGPoint(x: imageSize / 2, y: imageSize / 2)
 
 func runSpirographExample() {
     let scale = 3.0
-    let path = spirograph(innerRadius: 105, outerRadius: 12, distance: 31)
+    let path = spirograph(innerRadius: 12, outerRadius: 105, distance: 31)
         .lazy
         .prefix(100_000)
         .map { ($0 * scale) + patternOffset }
@@ -74,6 +74,7 @@ func runSpirographExample() {
     context.restoreGState()
     
     runSpirographExample_gradient()
+    runSpirographExample_another()
 }
 
 
@@ -89,7 +90,7 @@ func runSpirographExample_gradient() {
                             space: colorSpace,
                             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
 
-let image = spirograph(innerRadius: 38, outerRadius: 71, distance: 28)
+let image = spirograph(innerRadius: 71, outerRadius: 38, distance: 28)
     .lazy
     .prefix(100_000)
     .map { ($0 * scale) + patternOffset }
@@ -106,6 +107,35 @@ let image = spirograph(innerRadius: 38, outerRadius: 71, distance: 28)
         context.saveGState()
         context.addPath(path)
         context.setStrokeColor(.hue(hue))
+        context.strokePath()
+        context.restoreGState()
+    }
+    .makeImage()
+    print(image)
+}
+
+func runSpirographExample_another() {
+    let scale = 3.0
+    
+    let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)!
+    let context = CGContext(data: nil,
+                            width: imageSize,
+                            height: imageSize,
+                            bitsPerComponent: 8,
+                            bytesPerRow: 0,
+                            space: colorSpace,
+                            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+
+let image = spirograph(innerRadius: -47, outerRadius: 48, distance: 13)
+    .lazy
+    .prefix(100_00)
+    .map { ($0 * scale) + patternOffset }
+    .adjacentPairs()
+    .map { pointA, pointB in CGPath.line(from: pointA, to: pointB) }
+    .reduce(into: context) { context, path in
+        context.saveGState()
+        context.addPath(path)
+        context.setStrokeColor(CGColor(gray: 1.0, alpha: 1.0))
         context.strokePath()
         context.restoreGState()
     }
