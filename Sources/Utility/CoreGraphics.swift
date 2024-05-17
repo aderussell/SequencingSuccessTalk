@@ -5,6 +5,7 @@
 
 import CoreGraphics
 import AppKit
+import UniformTypeIdentifiers
 
 extension CGPoint {
     static func + (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
@@ -36,8 +37,8 @@ extension CGColor {
 
 extension CGImage {
     func save(to fileUrl: URL) {
-       // let type = UTType.png
-        guard let destination = CGImageDestinationCreateWithURL(fileUrl as CFURL, kUTTypePNG, 1, nil) else { return }
+        let type = UTType.png.identifier as CFString
+        guard let destination = CGImageDestinationCreateWithURL(fileUrl as CFURL, type, 1, nil) else { return }
         CGImageDestinationAddImage(destination, self, nil)
         CGImageDestinationFinalize(destination)
     }
