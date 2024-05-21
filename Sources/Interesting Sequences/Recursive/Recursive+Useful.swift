@@ -11,10 +11,12 @@ extension RecursiveSequence where Self: Collection {
     /// - Parameter path: The indexPath to get the elements along
     /// - Returns: An array which contains all the elements within the recursive sequence along the specified index path.
     public func elements(along path: IndexPath) -> [Element] {
-        return sequence(state: path) { state in
-            defer { state = state.dropLast() }
-            guard !state.isEmpty else { return nil }
-            return self[state]
-        }.reversed()
+        guard !path.isEmpty else { return [] }
+        var indices = path.makeIterator()
+        let initial = base[indices.next()!]
+        return sequence(first: initial) {
+            guard let index = indices.next() else { return nil }
+            return $0[keyPath: keyPath][index]
+        }.toArray()
     }
 }
