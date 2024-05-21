@@ -36,25 +36,25 @@ public struct GridOrientatedSequence<T>: Sequence {
 
 extension Grid {
     func rotatedRight() -> Grid {
-        let columns = (0..<width).map { content(column: $0).reversed() }
+        let columns = (0..<width).map { column($0).reversed() }
         return .init(elements: columns)
     }
 
     func flippedVertically() -> Grid {
-        let columns = (0..<width).map { content(column: $0) }
+        let columns = (0..<width).map { column($0) }
         return .init(elements: columns.reversed())
     }
 }
 
 extension Grid {
     mutating func rotateRight() {
-        let columns = (0..<width).map { content(column: $0).reversed() }
+        let columns = (0..<width).map { column($0).reversed() }
         elements = ContiguousArray(columns.lazy.flatMap { $0 })
         swap(&width, &height)
     }
 
     mutating func flip() {
-        let columns = (0..<width).map { content(column: $0) }
+        let columns = (0..<width).map { column($0) }
         elements = ContiguousArray(columns.lazy.reversed().flatMap { $0 })
     }
 }
@@ -70,7 +70,7 @@ extension Grid {
 
 extension Grid {
     func transposed() -> Self {
-        let columns = (0..<width).map { content(column: $0) }
+        let columns = (0..<width).map { column($0) }
         return .init(elements: columns)
     }
 }

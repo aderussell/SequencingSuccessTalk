@@ -71,17 +71,17 @@ extension Grid {
         switch direction {
         case .right:
             guard point.x < width - 1 else { return [] }
-            return Array(content(row: point.y).suffix(from: index(after: point)))
+            return Array(row(point.y).suffix(from: index(after: point)))
         case .down:
-            let line = content(column: point.y)
+            let line = column(point.y)
             return Array(line.suffix(from: line.index(after: point)))
         case .left:
             guard point.x > 0 else { return [] }
-            let line = content(row: point.y)
+            let line = row(point.y)
             return Array(line.prefix(upTo: point)).reversed()
         case .up:
             guard point.y > 0 else { return [] }
-            let line = content(column: point.y)
+            let line = column(point.y)
             return Array(line.prefix(upTo: point)).reversed()
         }
     }

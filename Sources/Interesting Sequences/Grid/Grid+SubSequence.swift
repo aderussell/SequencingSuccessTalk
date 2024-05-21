@@ -66,11 +66,11 @@ extension Grid {
 
 extension Grid {
     @inlinable
-    public func content(column: Int) -> GridSubSequence<Element> {
+    public func column(_ column: Int) -> GridSubSequence<Element> {
         subgrid(origin: .init(x: column, y: 0), width: 1, height: height)
     }
     @inlinable
-    public func content(row: Int) -> GridSubSequence<Element> {
+    public func row(_ row: Int) -> GridSubSequence<Element> {
         subgrid(origin: .init(x: 0, y: row), width: width, height: 1)
     }
 }
