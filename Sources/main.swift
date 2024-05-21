@@ -3,6 +3,7 @@
 
 import Foundation
 
+runLazyExample()
 runThemeParkExample()
 runFileSystemExample()
 runMessagesExample()
