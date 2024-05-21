@@ -43,7 +43,7 @@ final class GridTests: XCTestCase {
     
     func test_row() {
         let grid = Grid(elements: [[1,2,3,4],[5,6,7,8],[9,8,7,6],[0,2,3,4]])
-        let subgrid = grid.row(row: 1)
+        let subgrid = grid.row(1)
         XCTAssertEqual(Array(subgrid), [5,6,7,8])
     }
     
