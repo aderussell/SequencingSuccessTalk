@@ -4,6 +4,27 @@
 
 import Foundation
 
+
+public struct AlphabetIterator: IteratorProtocol {
+    public typealias Element = Character
+    private var position = 0
+    
+    public init() {}
+    
+    public mutating func next() -> Element? {
+        guard position < 26 else { return nil }
+        defer { position += 1 }
+        return Character(UnicodeScalar(position + 97)!)
+    }
+}
+
+public struct AlphabetSequence: Sequence {
+    public init() {}
+    public func makeIterator() -> AlphabetIterator {
+        AlphabetIterator()
+    }
+}
+
 /// A very simple Collection which returns all the letters of the lower-case Roman alphabet, each as a `Character`.
 ///
 /// Note that in this example, the `Element` and `Index` are now different types.
