@@ -171,14 +171,6 @@ func runSpirographExample_variousSamples() throws {
         Settings(outer: 105, inner: 12, distance: 31),
     ]
     
-    
-    let s2 = product(product(0...100, 0...100), 0...1)
-        .lazy
-        .map { (i,j) in
-            let (m,n) = i
-            return Settings(outer: Double(m), inner: Double(n), distance: Double(j))
-        }
-    
     for (index, setting) in settings.enumerated() {
         let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)!
         let context = CGContext(data: nil,
@@ -225,51 +217,33 @@ func runSpirographExample_exportingAnimation() async throws {
                             space: colorSpace,
                             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
     
-    
-    guard let pixelBuffer = createPixelBuffer(width: imageSize, height: imageSize) else { return }
-    let ciContext = CIContext()
-    
-    
     var df = try FileManager().url(for: .downloadsDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
     df.append(path: "final_composed_video.mov", directoryHint: .notDirectory)
     
-    await createAssetWriter(url: df, width: imageSize, height: imageSize) { assetWriterInput, assetWriterAdaptor in
-       
-        spirograph(innerRadius: 71, outerRadius: 38, distance: 28)
-            .lazy
-            .prefix(45_000)
-            .map { ($0 * scale) + patternOffset }
-            .adjacentPairs()
-            .map { pointA, pointB in CGPath.line(from: pointA, to: pointB) }
-            .enumerated()
-            .lazy
-            .map { index, path in
-                let hue = (Double(index) / 255.0).truncatingRemainder(dividingBy: 1.0)
-                return (hue, path)
-            }
-            .chunks(ofCount: 200)
-            .compactMap { chunk in
-                chunk.reduce(into: context, { context, content in
-                    let (hue, path) = content
-                    context.saveGState()
-                    context.addPath(path)
-                    context.setStrokeColor(.hue(hue))
-                    context.strokePath()
-                    context.restoreGState()
-                }).makeImage()
-            }
-            .enumerated()
-            .forEach { frameCount, image in
-                let staticImage = CIImage(cgImage: image)
-                ciContext.render(staticImage, to: pixelBuffer)
-                
-                if assetWriterInput.isReadyForMoreMediaData {
-                    let frameTime = CMTimeMake(value: Int64(frameCount), timescale: Int32(framesPerSecond))
-                    //append the contents of the pixelBuffer at the correct time
-                    assetWriterAdaptor.append(pixelBuffer, withPresentationTime: frameTime)
-                }
-            }
-    }
+    try await spirograph(innerRadius: 71, outerRadius: 38, distance: 28)
+        .lazy
+        .prefix(45_000)
+        .map { ($0 * scale) + patternOffset }
+        .adjacentPairs()
+        .map { pointA, pointB in CGPath.line(from: pointA, to: pointB) }
+        .enumerated()
+        .lazy
+        .map { index, path in
+            let hue = (Double(index) / 255.0).truncatingRemainder(dividingBy: 1.0)
+            return (CGColor.hue(hue), path)
+        }
+        .chunks(ofCount: 200)
+        .compactMap { chunk in
+            chunk.reduce(into: context, { context, content in
+                let (hue, path) = content
+                context.saveGState()
+                context.addPath(path)
+                context.setStrokeColor(hue)
+                context.strokePath()
+                context.restoreGState()
+            }).makeImage()
+        }
+        .createVideo(url: df, framesPerSecond: framesPerSecond)
 }
 
 
@@ -311,3 +285,35 @@ func createAssetWriter(url: URL, width: Int, height: Int, callback: (AVAssetWrit
     await assetwriter.finishWriting()
 }
 
+enum Errors: Error {
+    case noImages
+}
+
+extension Sequence where Element: CGImage {
+    func createVideo(url: URL, framesPerSecond: Int) async throws {
+        var iterator = self.makeIterator()
+        var image = iterator.next()
+        guard image != nil else { throw Errors.noImages }
+        
+        guard let pixelBuffer = createPixelBuffer(width: image!.width, height: image!.height) else { return }
+        let ciContext = CIContext()
+        var frameCount = 0
+        
+        await createAssetWriter(url: url, width: image!.width, height: image!.height) { assetWriterInput, assetWriterAdaptor in
+            
+            while image != nil {
+                let staticImage = CIImage(cgImage: image!)
+                ciContext.render(staticImage, to: pixelBuffer)
+                
+                if assetWriterInput.isReadyForMoreMediaData {
+                    let frameTime = CMTimeMake(value: Int64(frameCount), timescale: Int32(framesPerSecond))
+                    //append the contents of the pixelBuffer at the correct time
+                    assetWriterAdaptor.append(pixelBuffer, withPresentationTime: frameTime)
+                }
+                
+                image = iterator.next()
+                frameCount += 1
+            }
+        }
+    }
+}
