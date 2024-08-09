@@ -11,5 +11,5 @@ runSpirographExample()
 runGameOfLifeExample()
 
 if #available(macOS 13.0, *) {
-    try? runSpirographExample_exportingAnimation()
+    try? await runSpirographExample_exportingAnimation()
 }
