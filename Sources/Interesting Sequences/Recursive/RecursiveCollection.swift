@@ -13,12 +13,11 @@ extension RecursiveSequence: Collection where Base: Collection, S1: Collection, 
     public subscript(position: IndexPath) -> Element {
         assert(!position.isEmpty, "Position indexPath cannot be empty")
         var indices = position.makeIterator()
-        let initial = base[indices.next()!]
-        return sequence(first: initial) {
-            guard let index = indices.next() else { return nil }
-            return $0[keyPath: keyPath][index]
+        var initial = base[indices.next()!]
+        while let index = indices.next() {
+            initial = initial[keyPath: keyPath][index]
         }
-        .reduce(initial, { return $1 })
+        return initial
     }
     
     
