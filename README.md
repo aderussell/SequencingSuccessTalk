@@ -1,6 +1,10 @@
 
 # Sequencing Success
 
+## Further Information
+* [1. Sequences & Iterators](https://adrianrussell.co.uk/blog/2024/08/25/swift-sequences-1)
+* [2. Collections](https://adrianrussell.co.uk/blog/2024/08/25/swift-sequences-2)
+
 ## Examples
 
 ### Counter to Ten
